@@ -21,6 +21,11 @@ import torch.nn as nn
 from glob import glob
 from typing import Tuple
 
+GREEN = '\033[32m'
+RED = '\033[31m'
+YELLOW = '\033[33m'
+BLUE = '\033[34m'
+RESET = '\033[0m'
 
 # ============================================================================
 # 1. Per-Frequency Normalization
@@ -521,8 +526,8 @@ def load_gan_checkpoint(checkpoint_path, netG, netD, optimizerG=None, optimizerD
     epoch = checkpoint.get('epoch', 0)
     metric = checkpoint.get('quality_metric', 0.0)
     
-    print(f"📂 Checkpoint loaded: epoch {epoch}, quality {metric:.4f}")
-    print(f"   From: {checkpoint_path}")
+    print(f"*\t{GREEN}Checkpoint loaded: epoch {epoch}, quality {metric:.4f}{RESET}")
+    print(f" \tFrom: {checkpoint_path}")
     
     return checkpoint
 
