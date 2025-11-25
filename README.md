@@ -87,7 +87,7 @@ Checkpoints of the best and most recent GAN models:
 ```
 checkpoints/
 ```
-
+#### Our best checkpoint so far can be found here: https://drive.google.com/file/d/1VRXuY8vkVb7zOJidTYQdEpNmc-PQ9dVu/view?usp=sharing
 ---
 
 ## Files
