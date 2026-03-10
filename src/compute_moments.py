@@ -18,11 +18,13 @@ Or with custom paths:
 import os
 import specgan_utils as gan_utils
 from dotenv import load_dotenv
+import platform
 
 GREEN = '\033[32m'
 RED = '\033[31m'
 BLUE = '\033[34m'
 RESET = '\033[0m'
+IS_ALTERNATE_PATH = True
 """
 def read_args()->Tuple[str, str, bool]:
     \"""
@@ -68,11 +70,18 @@ def read_args()->Tuple[str, str, bool]:
 """
 
 def create_moments()->None:
+
     load_dotenv()
     # 1. Read in arguments for input/output files
+
     input_dir = os.getenv('DATA_ROOT')
     output_dir = os.getenv('MOMENTS_PATH')
     all_types = os.getenv('ALL_BURSTS')
+
+    if IS_ALTERNATE_PATH:
+        input_dir = os.getenv('WINDOWS_DATA_ROOT')
+        output_dir = os.getenv('WINDOWS_MOMENTS_PATH')
+        all_types = os.getenv('WINDOWS_ALL_BURSTS')
 
     # Print configuration
     print(

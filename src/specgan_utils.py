@@ -721,6 +721,7 @@ def compute_csv_moments(csv_dir, output_path='moments.npz', pattern='window_*.cs
     # Find all spectrogram files (CSV or NPY)
     csv_files = []
     for root, dirs, files in os.walk(csv_dir):
+        # print(file)
         for file in files:
             # Support CSV files
             if file.startswith('window_') and file.endswith('.csv'):
