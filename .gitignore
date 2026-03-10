@@ -182,5 +182,6 @@ poetry.toml
 pyrightconfig.json
 
 input_data/*
+!input_data/.gitkeep
 
 # End of https://www.toptal.com/developers/gitignore/api/python
