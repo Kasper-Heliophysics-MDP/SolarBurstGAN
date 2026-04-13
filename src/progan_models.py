@@ -229,3 +229,13 @@ if __name__ == '__main__':
         print("\tnetD = ProGANDiscriminator(kernel_len=5, dim=64, nc=1, use_batchnorm=False)")
         print("\tnetG.apply(weights_init)")
         print(f"\tnetD.apply(weights_init)\n{RESET}")
+
+
+def weights_init(m):
+    if type(m) == nn.Conv2d or type(m) == nn.ConvTranspose2d:
+        nn.init.xavier_normal_(m.weight.data)
+        if m.bias is not None:
+            nn.init.constant_(m.bias, 0)
+    elif type(m) == nn.BatchNorm2d:
+        nn.init.normal_(m.weight, 1.0, 0.02)
+        nn.init.constant_(m.bias, 0)

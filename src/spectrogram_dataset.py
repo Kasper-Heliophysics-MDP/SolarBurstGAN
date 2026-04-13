@@ -14,6 +14,8 @@ import os
 import numpy as np
 import pandas as pd
 import torch
+import cv2
+from PIL import Image
 from torch.utils.data import Dataset
 from dotenv import load_dotenv
 import matplotlib.pyplot as plt
@@ -304,6 +306,31 @@ class SpectrogramDataset(Dataset):
         """
         return self.csv_files[:n_samples]
     
+
+    def visualize_img_sample(self, idx, save_path=None):
+        spectrogram = self[idx]
+        
+        # Convert tensor to numpy for visualization
+        if spectrogram.shape[0] == 1:
+            # Grayscale
+            spec_np = spectrogram.squeeze(0).numpy()
+        else:
+            # RGB - take first channel
+            spec_np = spectrogram[0].numpy()
+        
+        plt.figure(figsize=(1.28, 1.28), dpi=100)
+        plt.gca().set_box_aspect(1)
+        plt.imshow(spec_np, aspect='equal', cmap='hot')
+        plt.axis('off')
+        
+        if save_path:
+            plt.savefig(save_path, dpi=150, bbox_inches='tight', pad_inches=0)
+            print(f"*\t{GREEN}Saved visualization to {save_path}{RESET}")
+        else:
+            plt.show()
+        
+        plt.close()
+    
     def visualize_sample(self, idx, save_path=None):
         """
         Visualize a single sample spectrogram
@@ -375,5 +402,46 @@ def test_dataset():
     
     return dataset
 
+def save_dataset():
+    print("="*70)
+    print("Saving CSVSpectrogramDataset as PNGs...")
+    print("="*70)
+
+    # Path to prepared data
+    load_dotenv()
+    data_root = os.getenv("DATA_ROOT")
+    img_root = os.getenv("TEST_IMG_ROOT")
+
+    # Create dataset
+    dataset = SpectrogramDataset(
+        root_dir=data_root,
+        normalize_method='minmax',
+        grayscale=False  # Use 3 channels for RGB compatibility
+    )
+    
+    print(f"\n*\tDataset loaded successfully!")
+    print(f" \tTotal samples: {len(dataset)}")
+    
+    # Test loading a few samples
+    print(f"\n*\tTesting sample loading...")
+    for i in range(len(dataset)):
+        sample = dataset[i]
+        print(f" \tSample {i}: shape={sample.shape}, dtype={sample.dtype}, "
+              f"range=[{sample.min():.3f}, {sample.max():.3f}]")
+        
+        print(f"\n*\tCreating visualization of sample {i}...\n")
+        dataset.visualize_img_sample(i, save_path=f'{img_root}/spec-{i}.png')
+
+        print(f"\n*\tFitting sample {i} to RGB format...\n")
+        img = Image.open(f"{img_root}/spec-{i}.png").convert("RGB")
+        img.save(f"{img_root}/spec-{i}.png")
+
+        print(f"\n*\tConverting sample {i} to 128x128...\n")
+        img_cv = cv2.imread(f"{img_root}/spec-{i}.png")
+        img_cv = cv2.resize(img_cv, (128, 128))
+        cv2.imwrite(f"{img_root}/spec_training_dataset/spectrogram-{i}.png", img_cv)
+    
+    return dataset
+
 if __name__ == "__main__":
-    test_dataset()
+    save_dataset()
